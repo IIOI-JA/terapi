@@ -17,46 +17,53 @@
 <script src="main.js" defer></script>
 
 <style>
-  /* ---- bubbles: three growing circles, illustrating scalability ---- */
-  /* shared bubble look */
+  /* ---- bubbles: three circles rising diagonally, illustrating scalability ---- */
+  /* shared bubble look: small bubble low, growing as it rises outward/upward */
   .hero-bubbles, .close-bubbles{
-    position:absolute; top:50%; display:flex; align-items:flex-end; gap:20px; pointer-events:none;
+    position:absolute; top:64px; width:200px; height:170px; pointer-events:none;
   }
-  .hero-bubbles .bubble, .close-bubbles .bubble{ border-radius:50%; opacity:0; transform:scale(.4); }
+  .bubble{ position:absolute; border-radius:50%; opacity:0; transform:scale(.4); bottom:0; }
   .bubble.b1{ width:30px; height:30px; background:var(--c-hairline); }
-  .bubble.b2{ width:58px; height:58px; background:#F4EEE4; border:2px solid #C7A46E; }
-  .bubble.b3{ width:100px; height:100px; background:#C7A46E; }
+  .bubble.b2{ width:58px; height:58px; background:#F4EEE4; border:2px solid #C7A46E; bottom:34px; }
+  .bubble.b3{ width:100px; height:100px; background:#C7A46E; bottom:68px; }
   @keyframes bubblePop{ 0%{ opacity:0; transform:scale(.4); } 70%{ transform:scale(1.08); } 100%{ opacity:1; transform:scale(1); } }
   @keyframes bubblePulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.05); } }
 
-  /* HERO — right group plays first (page load), then the mirrored left group */
-  .hero-bubbles.is-right{ right:clamp(24px,7vw,130px); transform:translateY(-50%); }
+  /* right-side groups: rise toward the upper-right (outward) */
+  .is-right .b1{ left:0; }
+  .is-right .b2{ left:46px; }
+  .is-right .b3{ left:96px; }
+  /* left-side groups: mirror via right-anchoring — rise toward the upper-left (outward) */
+  .is-left .b1{ right:0; }
+  .is-left .b2{ right:46px; }
+  .is-left .b3{ right:96px; }
+
+  .hero-bubbles.is-right{ right:clamp(24px,7vw,130px); }
+  .hero-bubbles.is-left{ left:clamp(24px,7vw,130px); }
+  /* HERO — right group rises first, then the left group */
   .hero-bubbles.is-right .b1{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) .25s forwards; }
   .hero-bubbles.is-right .b2{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) .5s forwards; }
   .hero-bubbles.is-right .b3{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) .75s forwards, bubblePulse 3.6s ease-in-out infinite 1.6s; }
-
-  .hero-bubbles.is-left{ left:clamp(24px,7vw,130px); transform:translateY(-50%) scaleX(-1); }
   .hero-bubbles.is-left .b1{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) 1.6s forwards; }
   .hero-bubbles.is-left .b2{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) 1.85s forwards; }
   .hero-bubbles.is-left .b3{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) 2.1s forwards, bubblePulse 3.6s ease-in-out infinite 3s; }
 
   @media (max-width:980px){
-    .hero-bubbles{ top:86px; bottom:auto; }
-    .hero-bubbles.is-right{ right:10px; transform:scale(.42); transform-origin:top right; }
-    .hero-bubbles.is-left{ left:10px; transform:scale(.42); transform-origin:top left; flex-direction:row-reverse; }
-    }
+    .hero-bubbles{ top:86px; transform:scale(.42); }
+    .hero-bubbles.is-right{ right:10px; transform-origin:top right; }
+    .hero-bubbles.is-left{ left:10px; transform-origin:top left; }
+  }
   @media (max-width:640px){
-    .hero-bubbles.is-right{ transform:scale(.32); transform-origin:top right; }
-    .hero-bubbles.is-left{ transform:scale(.32); transform-origin:top left; }
+    .hero-bubbles{ transform:scale(.32); }
   }
   @media (prefers-reduced-motion: reduce){
     .hero-bubbles .bubble{ animation:none !important; opacity:1 !important; transform:scale(1) !important; }
   }
 
-  /* CLOSING SLIDE — same graphic, no text, left group plays first this time.
+  /* CLOSING SLIDE — same graphic, no text, left group rises first this time.
      Scoped to .is-active so it replays every time this slide scrolls into view. */
-  .close-bubbles.is-left{ left:clamp(24px,7vw,130px); transform:translateY(-50%); }
-  .close-bubbles.is-right{ right:clamp(24px,7vw,130px); transform:translateY(-50%) scaleX(-1); }
+  .close-bubbles.is-left{ left:clamp(24px,7vw,130px); }
+  .close-bubbles.is-right{ right:clamp(24px,7vw,130px); }
   .slide .close-bubbles .bubble{ animation:none; }
   .slide.is-active .close-bubbles.is-left .b1{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) .25s forwards; }
   .slide.is-active .close-bubbles.is-left .b2{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) .5s forwards; }
@@ -66,14 +73,12 @@
   .slide.is-active .close-bubbles.is-right .b3{ animation:bubblePop .65s cubic-bezier(.22,1.4,.36,1) 2.1s forwards, bubblePulse 3.6s ease-in-out infinite 3s; }
 
   @media (max-width:980px){
-    .close-bubbles.is-left{ left:14px; }
-    .close-bubbles.is-right{ right:14px; }
-    .close-bubbles.is-left, .close-bubbles.is-right{ transform:translateY(-50%) scale(.55); }
-    .close-bubbles.is-right{ transform:translateY(-50%) scale(.55) scaleX(-1); }
+    .close-bubbles{ transform:scale(.55); }
+    .close-bubbles.is-left{ left:14px; transform-origin:top left; }
+    .close-bubbles.is-right{ right:14px; transform-origin:top right; }
   }
   @media (max-width:640px){
-    .close-bubbles.is-left, .close-bubbles.is-right{ transform:translateY(-50%) scale(.4); }
-    .close-bubbles.is-right{ transform:translateY(-50%) scale(.4) scaleX(-1); }
+    .close-bubbles{ transform:scale(.4); }
   }
   @media (prefers-reduced-motion: reduce){
     .close-bubbles .bubble{ animation:none !important; opacity:1 !important; transform:scale(1) !important; }
@@ -106,7 +111,6 @@
     <button class="dot" data-go="3" aria-label="4"></button>
     <button class="dot" data-go="4" aria-label="5"></button>
     <button class="dot" data-go="5" aria-label="6"></button>
-    <button class="dot" data-go="6" aria-label="7"></button>
   </nav>
 
   <div class="shell-tools">
@@ -121,7 +125,7 @@
 </header>
 
 <aside class="counter" aria-hidden="true">
-  <span class="ctr-num">01</span><span class="ctr-sep"></span><span class="ctr-tot">07</span>
+  <span class="ctr-num">01</span><span class="ctr-sep"></span><span class="ctr-tot">06</span>
 </aside>
 <aside class="hint" aria-hidden="true">
   <span data-lang="da">scroll · piletaster · L sprog</span>
@@ -357,8 +361,18 @@
   </section>
 
   <!-- 6 · CTA -->
-  <section class="slide" data-slide="5" style="background:var(--c-bg);">
-    <div class="wrap" style="text-align:center; max-width:760px; margin-left:auto; margin-right:auto;">
+  <section class="slide" data-slide="5" style="background:linear-gradient(180deg,var(--c-bg-2),var(--c-bg)); position:relative; overflow:hidden;">
+    <div class="close-bubbles is-left" aria-hidden="true">
+      <span class="bubble b1"></span>
+      <span class="bubble b2"></span>
+      <span class="bubble b3"></span>
+    </div>
+    <div class="close-bubbles is-right" aria-hidden="true">
+      <span class="bubble b1"></span>
+      <span class="bubble b2"></span>
+      <span class="bubble b3"></span>
+    </div>
+    <div class="wrap" style="text-align:center; max-width:760px; margin-left:auto; margin-right:auto; position:relative; z-index:1;">
       <h2 class="display small reveal reveal-d2">
         <span data-lang="da">Klar til at begynde et forløb?</span>
         <span data-lang="en">Ready to begin a course?</span>
@@ -397,21 +411,6 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
-
-
-  <!-- 7 · CLOSING GRAPHIC — bilateral motif, no text -->
-  <section class="slide" data-slide="6" style="background:linear-gradient(180deg,var(--c-bg-2),var(--c-bg)); position:relative; overflow:hidden;">
-    <div class="close-bubbles is-left" aria-hidden="true">
-      <span class="bubble b1"></span>
-      <span class="bubble b2"></span>
-      <span class="bubble b3"></span>
-    </div>
-    <div class="close-bubbles is-right" aria-hidden="true">
-      <span class="bubble b1"></span>
-      <span class="bubble b2"></span>
-      <span class="bubble b3"></span>
     </div>
   </section>
 
